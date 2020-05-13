@@ -1,6 +1,7 @@
+let moment = require("moment")
 let config = require("../config.json")
 let handle_comment = require("./handle_comment.js")
-var handle_vote = require("./handle_vote.js")
+let handle_vote = require("./handle_vote.js")
 let id = config.custom_json_id
 
 //Handles general block
@@ -9,7 +10,7 @@ function parseBlock(block){
     for (i in transactions){
         let operations = transactions[i].operations
         if (operations[0][0] == "custom_json"){
-            parseCustomJson(transactions[i], block.timestamp)
+            parseCustomJson(transactions[i], moment.utc(block.timestamp).unix())
         }
     }
 }
