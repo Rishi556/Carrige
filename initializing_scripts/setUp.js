@@ -21,8 +21,8 @@ connection.connect((err) => {
     sql += `CREATE TABLE users (ID INT PRIMARY KEY, Username VARCHAR(255) UNIQUE);`
     sql += `CREATE TABLE comments (Permlink INT AUTO_INCREMENT PRIMARY KEY,ParentID INT, AuthorID INT, Title VARCHAR(255), Body VARCHAR(255), Metadata JSON, PostTime INT);`
     sql += `CREATE TABLE votes (Permlink INT, VoterID INT, VoteValue INT);`
-    sql += `ALTER TABLE comments ADD FOREIGN KEY (Author) REFERENCES users(ID);`
-    sql += `ALTER TABLE votes ADD FOREIGN KEY (Voter) REFERENCES users(ID)`
+    sql += `ALTER TABLE comments ADD FOREIGN KEY (AuthorID) REFERENCES users(ID);`
+    sql += `ALTER TABLE votes ADD FOREIGN KEY (VoterID) REFERENCES users(ID)`
     
     connection.query(sql, (err, result) => {
         if(err){
