@@ -1,5 +1,6 @@
 let mysql = require("mysql")
 let config = require("../config.json")
+let hive = require("@hivechain/hivejs")
 
 let db_config = {
     host : config.db_host,
@@ -36,6 +37,40 @@ function saveLatestBlock(blockNumber){
     })
 }
 
+function saveNewRootPost(author, title, body, metadata, postTime){
+  connection.query(`SELECT * FROM users WHERE Username="${author}";`, (err, result) => {
+    console.log(err, result)
+    if (err || !result.length){
+      hive.api.getAccounts([author], (errHive, resultHive) => {
+        if (errHive){
+          setTimeout(() => {
+            saveNewRootPost(author, title, body, metadata, postTime)
+          }, 1000 * 0.5)
+          return
+        }
+        let id = resultHive[0].id
+        connection.query(`INSERT INTO users (ID, Username) VALUES(${id}, "${author}");`, (errTwo, resultTwo) => {
+          if (errTwo){
+            setTimeout(() => {
+              saveNewRootPost(author, title, body, metadata, postTime)
+            }, 1000 * 0.5)
+          } else {
+            connection.query(`INSERT INTO comments (AuthorID, Title, Body, Metadata, PostTime) VALUES(${id}, "${title}", "${body}", "${JSON.stringify(metadata)}", ${postTime});`, (errThree, resultThree) => {
+              //Error handling goes here
+            })
+          }
+        })
+      })
+    } else {
+      let id = result[0].ID
+      connection.query(`INSERT INTO comments (AuthorID, Title, Body, Metadata, PostTime) VALUES(${id}, "${title}", "${body}", "${JSON.stringify(metadata)}", ${postTime});`, (errTwo, resultTwo) => {
+        //Error handling goes here
+      })
+    }
+  })
+}
+
 module.exports = {
-    saveLatestBlock
+    saveLatestBlock,
+    saveNewRootPost
 }

@@ -7,11 +7,16 @@ function handleComment(user, time, json){
             return
         }
         let isRoot = false
-        if (json["parent-author"] == ""){
+        if (json["parent-permlink"] == ""){
             isRoot = true
         }
         if (config.features.root_post && isRoot){
-            //Save as root.
+            try {
+                let metadata = JSON.parse(json.metadata)
+                db_updater.saveNewRootPost(json.author, json.title, json.body, metadata, time)
+            } catch (e){
+
+            }
             return
         }
         if (config.features.comment && !isRoot){
@@ -25,14 +30,12 @@ function checkCommentJsonSchema(json){
     let schema = {
         "action" : String,
         "author": String,
-        "parent-author" : String,
         "parent-permlink" : String,
         "title" : String,
         "body" : String,
         "metadata" : String
     }
     for (i in schema){
-        console.log(typeof json[i])
         if (json[i] == undefined){
             return false
         }
