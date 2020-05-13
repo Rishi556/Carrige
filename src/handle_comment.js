@@ -2,7 +2,7 @@ let db_updater = require("./db_updater.js")
 let config = require("../config.json")
 
 function handleComment(user, block, time, json){
-    if (checkJsonSchema(json)){
+    if (checkCommentJsonSchema(json)){
         if (json.author != user){
             return
         }
@@ -21,7 +21,7 @@ function handleComment(user, block, time, json){
     }
 }
 
-function checkJsonSchema(json){
+function checkCommentJsonSchema(json){
     let schema = {
         "action" : String,
         "author": String,
@@ -40,6 +40,59 @@ function checkJsonSchema(json){
     return true
 }
 
+function handleUpdateComment(user, block, time, json){
+    if (checkUpdateCommentJsonSchema(json)){
+        //SQL, UPDATE WHERE AUTHOR = USER AND PERMLINK=PERMLINK ONLY ALLOWED TO CHANGE BODY, TITLE METADATA
+        if (json.author != user || !config.features.update_comment){
+            return
+        }
+    }
+}
+
+function checkUpdateCommentJsonSchema(json){
+    let schema = {
+        "action" : String,
+        "author": String,
+        "permlink" : String,
+        "title" : String,
+        "body" : String,
+        "metadata" : String
+    }
+    for (i in schema){
+        console.log(typeof json[i])
+        if (json[i] == undefined){
+            return false
+        }
+    }
+    return true
+}
+
+function deleteComment(user, block, time, json){
+    if (checkDeleteCommentJsonSchema(json)){
+        if (json.author != user || !config.features.delete_comment){
+            return
+        }
+        //DELETE COMMENT
+    }
+}
+
+function checkDeleteCommentJsonSchema(json){
+    let schema = {
+        "action" : String,
+        "author": String,
+        "permlink" : String
+    }
+    for (i in schema){
+        console.log(typeof json[i])
+        if (json[i] == undefined){
+            return false
+        }
+    }
+    return true
+}
+
 module.exports = {
-    handleComment
+    handleComment,
+    handleUpdateComment,
+    deleteComment
 }

@@ -7,8 +7,11 @@
     "features": {
         "root_post" : true,
         "comment" : true,
+        "delete_comment" : true,
+        "update_comment" : true,
         "upvote" : true,
         "downvote" : true,
+        "remove_vote" : true,
         "admin_action" : {
             "delete_comment" : true,
             "ban_user" : true

@@ -1,5 +1,6 @@
 let config = require("../config.json")
 let handle_comment = require("./handle_comment.js")
+var handle_vote = require("./handle_vote.js")
 let id = config.custom_json_id
 
 //Handles general block
@@ -28,6 +29,15 @@ function handleTransaction(transaction, time){
     let json = JSON.parse(operation.json)
     if (json.action == "comment"){
         handle_comment.handleComment(user, block, time, json)
+    }
+    if (json.action == "update_comment"){
+        handle_comment.handleUpdateComment(user, block, time, json)
+    }
+    if (json.action == "delete_comment"){
+        handle_comment.deleteComment(user, block, time, json)
+    }
+    if (json.action == "vote"){
+        handle_vote.handleVote(user, block, time, json)
     }
 }
 
