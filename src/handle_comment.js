@@ -17,7 +17,6 @@ function handleComment(user, time, json){
             } catch (e){
 
             }
-            return
         }
         if (config.features.comment && !isRoot){
             try {
@@ -26,7 +25,6 @@ function handleComment(user, time, json){
             } catch (e){
 
             }
-            return
         }
     }
 }
@@ -54,6 +52,12 @@ function handleUpdateComment(user, time, json){
         if (json.author != user || !config.features.update_comment){
             return
         }
+        try {
+            let metadata = JSON.parse(json.metadata)
+            db_updater.updateComment(json.permlink, json.author, json.title, jsob.body, metadata, time)
+        } catch (e){
+
+        }
     }
 }
 
@@ -75,12 +79,12 @@ function checkUpdateCommentJsonSchema(json){
     return true
 }
 
-function deleteComment(user, time, json){
+function deleteComment(user, json){
     if (checkDeleteCommentJsonSchema(json)){
         if (json.author != user || !config.features.delete_comment){
             return
         }
-        //DELETE COMMENT
+        db_updater.deleteComment(post.permlink, post.author)
     }
 }
 
