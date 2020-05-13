@@ -54,7 +54,7 @@ function handleUpdateComment(user, time, json){
         }
         try {
             let metadata = JSON.parse(json.metadata)
-            db_updater.updateComment(json.permlink, json.author, json.title, jsob.body, metadata, time)
+            db_updater.updateComment(json.permlink, json.author, json.title, json.body, metadata, time)
         } catch (e){
 
         }
@@ -71,7 +71,6 @@ function checkUpdateCommentJsonSchema(json){
         "metadata" : String
     }
     for (i in schema){
-        console.log(typeof json[i])
         if (json[i] == undefined){
             return false
         }
@@ -84,7 +83,7 @@ function deleteComment(user, json){
         if (json.author != user || !config.features.delete_comment){
             return
         }
-        db_updater.deleteComment(post.permlink, post.author)
+        db_updater.deleteComment(json.permlink, json.author)
     }
 }
 
@@ -95,7 +94,6 @@ function checkDeleteCommentJsonSchema(json){
         "permlink" : String
     }
     for (i in schema){
-        console.log(typeof json[i])
         if (json[i] == undefined){
             return false
         }

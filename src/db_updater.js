@@ -84,9 +84,14 @@ function saveNewPostComment(parentPermlink, author, title, body, metadata, postT
 function deleteComment(permlink, author){
   connection.query(`SELECT * FROM users WHERE Username="${author}";`, (err, result) => {
     if (!err && result.length){
-      let id = reslut[0].ID
+      let id = result[0].ID
       connection.query(`DELETE FROM comments WHERE Permlink=${permlink} AND AuthorID=${id};`, (errTwo, resultTwo) => {
-        //Error handling goes here
+        if (!errTwo && resultTwo.length){
+          console.log(resultTwo)
+          // connection.query(`DELETE FROM comments WHERE Permlink=${permlink} AND AuthorID=${id};`, (errThree, resultThree) => {
+        
+          // })
+        }
       })
     }
   })
@@ -94,11 +99,13 @@ function deleteComment(permlink, author){
 
 function updateComment(permlink, author, title, body, metadata, postTime){
   connection.query(`SELECT * FROM users WHERE Username="${author}";`, (err, result) => {
+    console.log(err, result)
     if (!err && result.length){
-      let id = reslut[0].ID
+      let id = result[0].ID
       connection.query(`SELECT * FROM comments WHERE AuthorID=${id} AND Permlink=${permlink};`, (errTwo, resultTwo) => {
         if (!errTwo && resultTwo.length){
-          connection.query(`REPLACE INTO comments (Permlink, Title, Body, Metadata, PostTime) VALUES(${permlink}, "${title}", "${body}", "${JSON.stringify(metadata)}", ${postTime});`, (errThree, resultThree) => {
+          let parentID = resultTwo[0].ParentID
+          connection.query(`REPLACE INTO comments (Permlink,ParentID, AuthorID, Title, Body, Metadata, PostTime) VALUES(${permlink}, ${parentID}, ${id}, "${title}", "${body}", "${JSON.stringify(metadata)}", ${postTime});`, (errThree, resultThree) => {
             //Error handling goes here
           })
         }
