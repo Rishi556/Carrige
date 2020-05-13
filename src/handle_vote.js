@@ -1,17 +1,17 @@
 let db_updater = require("./db_updater.js")
 let config = require("../config.json")
 
-function handleVote(user, time, json){
+function handleVote(user, json){
     if (checkVoteJsonSchema(json)){
         if (user == json.voter){
             if (json.vote == "upvote" && config.features.upvote){
-                //increment vote
+                db_updater.saveVote(json.voter, json.permlink, 1)
             }
             if (json.vote == "downvote" && config.features.downvote){
-                //decrement vote
+                db_updater.saveVote(json.voter, json.permlink, -1)
             }
             if (json.vote == "unvote" && config.features.remove_vote){
-                //remove vote
+                db_updater.saveVote(json.voter, json.permlink, 0)
             }
         }
     }

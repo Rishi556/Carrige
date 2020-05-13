@@ -114,10 +114,59 @@ function updateComment(permlink, author, title, body, metadata, postTime){
   })
 }
 
+function saveVote(voter, permlink, voteValue){
+  connection.query(`SELECT * FROM users WHERE Username="${voter}";`, (err, result) => {
+    if (err || !result.length){
+      hive.api.getAccounts([author], (errHive, resultHive) => {
+        if (errHive){
+          setTimeout(() => {
+            saveVote(voter, permlink, voteValue)
+          }, 1000 * 0.5)
+          return
+        }
+        let id = resultHive[0].id
+        connection.query(`INSERT INTO users (ID, Username) VALUES(${id}, "${voter}");`, (errTwo, resultTwo) => {
+          if (errTwo){
+            setTimeout(() => {
+              saveVote(voter, permlink, voteValue)
+            }, 1000 * 0.5)
+          } else {
+            connection.query(`SELECT * FROM votes WHERE VoterID=${id} AND Permlink=${permlink};`, (errThree, resultThree) => {
+              if (resultThree.length){
+                connection.query(`UPDATE users WHERE VoterID=${id} AND Permlink=${permlink} SET VoteValue=${voteValue};`, (errFour, resultFour) => {
+                  //handle error
+                })
+              } else {
+                connection.query(`INSERT INTO votes (Permlink, VoterID, VoteValue) VALUES(${permlink}, ${id}, ${voteValue});`, (errFour, resultFour) => {
+                  //handle error
+                })
+              }
+            })
+          }
+        })
+      })
+    } else {
+      let id = result[0].ID
+      connection.query(`SELECT * FROM votes WHERE VoterID=${id} AND Permlink=${permlink};`, (errTwo, resultTwo) => {
+        if (resutlTwo.length){
+          connection.query(`UPDATE users WHERE VoterID=${id} AND Permlink=${permlink} SET VoteValue=${voteValue};`, (errThree, resultThree) => {
+            //handle error
+          })
+        } else {
+          connection.query(`INSERT INTO votes (Permlink, VoterID, VoteValue) VALUES(${permlink}, ${id}, ${voteValue});`, (errThree, errThree) => {
+            //handle error
+          })
+        }
+      })
+    }
+  })
+}
+
 module.exports = {
     saveLatestBlock,
     saveNewRootPost,
     saveNewPostComment,
     deleteComment,
-    updateComment
+    updateComment,
+    saveVote
 }

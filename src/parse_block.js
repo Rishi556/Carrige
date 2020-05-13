@@ -37,7 +37,7 @@ function handleTransaction(transaction, time){
         handle_comment.deleteComment(user, json)
     }
     if (json.action == "vote"){
-        handle_vote.handleVote(user, time, json)
+        handle_vote.handleVote(user, json)
     }
 }
 
