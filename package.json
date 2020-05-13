@@ -1,0 +1,16 @@
+{
+  "name": "Carrige",
+  "version": "1.0.0",
+  "description": "Starting off creating your own custom_json site. Backend.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Rishi556 <rishipanthee@ryamer.com>, HexTech Group",
+  "license": "MIT",
+  "dependencies": {
+    "@hivechain/hivejs": "1.0.4",
+    "mysql": "2.18.1"
+  }
+}
