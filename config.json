@@ -12,6 +12,7 @@
         "upvote" : true,
         "downvote" : true,
         "remove_vote" : true,
+        "share" :true,
         "admin_action" : {
             "delete_comment" : true,
             "ban_user" : true
