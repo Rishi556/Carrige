@@ -66,7 +66,7 @@ function saveNewComment(parentPermlink, author, title, body, metadata, postTime)
     if (err || !result.length){
       saveHiveUserID(author, (hiveID) => {
         if (hiveID.success){
-          let id = resultHive.data.id
+          let id = hiveID.data.id
           connection.query(`INSERT INTO comments (ParentID, AuthorID, Title, Body, Metadata, PostTime) VALUES(${parentPermlink}, ${id}, "${title}", "${body}", "${JSON.stringify(metadata)}", ${postTime});`, (errThree, resultThree) => {
             //Error handling goes here
           })
@@ -133,7 +133,7 @@ function saveVote(voter, permlink, voteValue){
         if (err || !result.length){
           saveHiveUserID(author, (hiveID) => {
             if (hiveID.success){
-              let id = resultHive.data.id
+              let id = hiveID.data.id
               connection.query(`INSERT INTO users (ID, Username) VALUES(${id}, "${voter}");`, (errTwo, resultTwo) => {
                 if (errTwo){
                   setTimeout(() => {
