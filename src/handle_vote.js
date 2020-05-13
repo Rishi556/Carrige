@@ -1,7 +1,7 @@
 let db_updater = require("./db_updater.js")
 let config = require("../config.json")
 
-function handleVote(user, block, time, json){
+function handleVote(user, time, json){
     if (checkVoteJsonSchema(json)){
         if (user == json.voter){
             if (json.vote == "upvote" && config.features.upvote){

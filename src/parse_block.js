@@ -25,19 +25,18 @@ function parseCustomJson(customJson, time){
 function handleTransaction(transaction, time){
     let operation = transaction.operations[0][1]
     let user = operation.required_posting_auths[0]
-    let block = transaction.block_num
     let json = JSON.parse(operation.json)
     if (json.action == "comment"){
-        handle_comment.handleComment(user, block, time, json)
+        handle_comment.handleComment(user, time, json)
     }
     if (json.action == "update_comment"){
-        handle_comment.handleUpdateComment(user, block, time, json)
+        handle_comment.handleUpdateComment(user, time, json)
     }
     if (json.action == "delete_comment"){
-        handle_comment.deleteComment(user, block, time, json)
+        handle_comment.deleteComment(user, time, json)
     }
     if (json.action == "vote"){
-        handle_vote.handleVote(user, block, time, json)
+        handle_vote.handleVote(user, time, json)
     }
 }
 

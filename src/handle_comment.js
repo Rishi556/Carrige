@@ -1,7 +1,7 @@
 let db_updater = require("./db_updater.js")
 let config = require("../config.json")
 
-function handleComment(user, block, time, json){
+function handleComment(user, time, json){
     if (checkCommentJsonSchema(json)){
         if (json.author != user){
             return
@@ -11,11 +11,11 @@ function handleComment(user, block, time, json){
             isRoot = true
         }
         if (config.features.root_post && isRoot){
-            //Save as root. reemebre to give permlink and likes field
+            //Save as root.
             return
         }
         if (config.features.comment && !isRoot){
-            //save as comment, ensure both parent-author and parent-permlink aren't blank though otherwise could cause problem.reemebre to give permlink and likes field
+            //save as comment, ensure both parent-author and parent-permlink aren't blank though otherwise could cause problem.
             return
         }
     }
@@ -40,7 +40,7 @@ function checkCommentJsonSchema(json){
     return true
 }
 
-function handleUpdateComment(user, block, time, json){
+function handleUpdateComment(user, time, json){
     if (checkUpdateCommentJsonSchema(json)){
         //SQL, UPDATE WHERE AUTHOR = USER AND PERMLINK=PERMLINK ONLY ALLOWED TO CHANGE BODY, TITLE METADATA
         if (json.author != user || !config.features.update_comment){
@@ -67,7 +67,7 @@ function checkUpdateCommentJsonSchema(json){
     return true
 }
 
-function deleteComment(user, block, time, json){
+function deleteComment(user, time, json){
     if (checkDeleteCommentJsonSchema(json)){
         if (json.author != user || !config.features.delete_comment){
             return
