@@ -18,7 +18,7 @@ connection.connect((err) => {
     }
     let sql = `CREATE TABLE general_stats (last_parsed_block INT);`
     sql += `INSERT INTO general_stats VALUES(-1);`
-    sql += `CREATE TABLE users (ID INT PRIMARY KEY, Username VARCHAR(255));`
+    sql += `CREATE TABLE users (ID INT PRIMARY KEY, Username VARCHAR(255) UNIQUE);`
     sql += `CREATE TABLE comments (Permlink INT AUTO_INCREMENT PRIMARY KEY,ParentID INT, Author INT, Title VARCHAR(255), Body VARCHAR(255), Metadata JSON, PostTime INT);`
     sql += `CREATE TABLE votes (Permlink INT, Voter INT, VoteValue INT);`
     sql += `ALTER TABLE comments ADD FOREIGN KEY (Author) REFERENCES users(ID);`
