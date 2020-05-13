@@ -7,7 +7,7 @@ function handleComment(user, block, time, json){
             return
         }
         let isRoot = false
-        if (json["parent-author"] == "" && json["parent-permlink"] == ""){
+        if (json["parent-author"] == ""){
             isRoot = true
         }
         if (config.features.root_post && isRoot){
