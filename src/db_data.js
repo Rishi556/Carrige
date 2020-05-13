@@ -38,6 +38,28 @@ function getLatestBlock(callback){
     })
 }
 
+function getCommentWithPermlink(permlink, callback){
+  connection.query(`SELECT * from comments WHERE Permlink=${permlink};`, (err, result) => {
+    if (err){
+        callback({success : false, error: err})
+        return
+    }
+    callback({success : true, data: result})
+  })
+}
+
+function getUserID(user, callback){
+  connection.query(`SELECT * FROM users WHERE Username="${user}";`, (err, result) => {
+    if (err){
+      callback({success : false, error: err})
+      return
+      }
+      callback({success : true, data: result})
+  })
+}
+
 module.exports = {
-    getLatestBlock
+    getLatestBlock,
+    getCommentWithPermlink,
+    getUserID
 }

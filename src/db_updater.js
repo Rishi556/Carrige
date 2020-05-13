@@ -29,6 +29,30 @@ function handleDisconnect() {
   })
 }
 
+function saveHiveUserID(user, callback){
+  hive.api.getAccounts([user], (errHive, resultHive) => {
+    if (errHive){
+      if (callback){
+        callback({success : false, error: errHive})
+      }
+      return
+    }
+    let id = resultHive[0].id
+    connection.query(`INSERT INTO users (ID, Username) VALUES(${id}, "${user}");`, (errTwo, resultTwo) => {
+      if (errTwo){
+        if (callback){
+          callback({success : false, error: errTwo})
+        }
+        return
+      } else {
+        if (callback){
+          callback({success : true, data : {id : id}})
+        }
+      }
+    })
+  })
+}
+
 function saveLatestBlock(blockNumber){
     connection.query(`UPDATE general_stats Set last_parsed_block = ${blockNumber};`, (err, result) => {
         if(err){
@@ -40,25 +64,13 @@ function saveLatestBlock(blockNumber){
 function saveNewComment(parentPermlink, author, title, body, metadata, postTime){
   connection.query(`SELECT * FROM users WHERE Username="${author}";`, (err, result) => {
     if (err || !result.length){
-      hive.api.getAccounts([author], (errHive, resultHive) => {
-        if (errHive){
-          setTimeout(() => {
-            saveNewRootPost(author, title, body, metadata, postTime)
-          }, 1000 * 0.5)
-          return
+      saveHiveUserID(author, (hiveID) => {
+        if (hiveID.success){
+          let id = resultHive.data.id
+          connection.query(`INSERT INTO comments (ParentID, AuthorID, Title, Body, Metadata, PostTime) VALUES(${parentPermlink}, ${id}, "${title}", "${body}", "${JSON.stringify(metadata)}", ${postTime});`, (errThree, resultThree) => {
+            //Error handling goes here
+          })
         }
-        let id = resultHive[0].id
-        connection.query(`INSERT INTO users (ID, Username) VALUES(${id}, "${author}");`, (errTwo, resultTwo) => {
-          if (errTwo){
-            setTimeout(() => {
-              saveNewRootPost(author, title, body, metadata, postTime)
-            }, 1000 * 0.5)
-          } else {
-            connection.query(`INSERT INTO comments (ParentID, AuthorID, Title, Body, Metadata, PostTime) VALUES(${parentPermlink}, ${id}, "${title}", "${body}", "${JSON.stringify(metadata)}", ${postTime});`, (errThree, resultThree) => {
-              //Error handling goes here
-            })
-          }
-        })
       })
     } else {
       let id = result[0].ID
@@ -115,46 +127,46 @@ function updateComment(permlink, author, title, body, metadata, postTime){
 }
 
 function saveVote(voter, permlink, voteValue){
-  connection.query(`SELECT * FROM users WHERE Username="${voter}";`, (err, result) => {
-    if (err || !result.length){
-      hive.api.getAccounts([author], (errHive, resultHive) => {
-        if (errHive){
-          setTimeout(() => {
-            saveVote(voter, permlink, voteValue)
-          }, 1000 * 0.5)
-          return
-        }
-        let id = resultHive[0].id
-        connection.query(`INSERT INTO users (ID, Username) VALUES(${id}, "${voter}");`, (errTwo, resultTwo) => {
-          if (errTwo){
-            setTimeout(() => {
-              saveVote(voter, permlink, voteValue)
-            }, 1000 * 0.5)
-          } else {
-            connection.query(`SELECT * FROM votes WHERE VoterID=${id} AND Permlink=${permlink};`, (errThree, resultThree) => {
-              if (resultThree.length){
-                connection.query(`UPDATE users WHERE VoterID=${id} AND Permlink=${permlink} SET VoteValue=${voteValue};`, (errFour, resultFour) => {
-                  //handle error
-                })
-              } else {
-                connection.query(`INSERT INTO votes (Permlink, VoterID, VoteValue) VALUES(${permlink}, ${id}, ${voteValue});`, (errFour, resultFour) => {
-                  //handle error
-                })
-              }
-            })
-          }
-        })
-      })
-    } else {
-      let id = result[0].ID
-      connection.query(`SELECT * FROM votes WHERE VoterID=${id} AND Permlink=${permlink};`, (errTwo, resultTwo) => {
-        if (resutlTwo.length){
-          connection.query(`UPDATE users WHERE VoterID=${id} AND Permlink=${permlink} SET VoteValue=${voteValue};`, (errThree, resultThree) => {
-            //handle error
+  connection.query(`SELECT * FROM comments WHERE Permlink=${permlink};`, (errZero, resultZero) => {
+    if (!errZero && resultZero.length){
+      connection.query(`SELECT * FROM users WHERE Username="${voter}";`, (err, result) => {
+        if (err || !result.length){
+          saveHiveUserID(author, (hiveID) => {
+            if (hiveID.success){
+              let id = resultHive.data.id
+              connection.query(`INSERT INTO users (ID, Username) VALUES(${id}, "${voter}");`, (errTwo, resultTwo) => {
+                if (errTwo){
+                  setTimeout(() => {
+                    saveVote(voter, permlink, voteValue)
+                  }, 1000 * 0.5)
+                } else {
+                  connection.query(`SELECT * FROM votes WHERE VoterID=${id} AND Permlink=${permlink};`, (errThree, resultThree) => {
+                    if (resultThree.length){
+                      connection.query(`UPDATE users WHERE VoterID=${id} AND Permlink=${permlink} SET VoteValue=${voteValue};`, (errFour, resultFour) => {
+                        //handle error
+                      })
+                    } else {
+                      connection.query(`INSERT INTO votes (Permlink, VoterID, VoteValue) VALUES(${permlink}, ${id}, ${voteValue});`, (errFour, resultFour) => {
+                        //handle error
+                      })
+                    }
+                  })
+                }
+              })
+            }
           })
         } else {
-          connection.query(`INSERT INTO votes (Permlink, VoterID, VoteValue) VALUES(${permlink}, ${id}, ${voteValue});`, (errThree, errThree) => {
-            //handle error
+          let id = result[0].ID
+          connection.query(`SELECT * FROM votes WHERE VoterID=${id} AND Permlink=${permlink};`, (errTwo, resultTwo) => {
+            if (resultTwo.length){
+              connection.query(`UPDATE users WHERE VoterID=${id} AND Permlink=${permlink} SET VoteValue=${voteValue};`, (errThree, resultThree) => {
+                //handle error
+              })
+            } else {
+              connection.query(`INSERT INTO votes (Permlink, VoterID, VoteValue) VALUES(${permlink}, ${id}, ${voteValue});`, (errThree, errThree) => {
+                //handle error
+              })
+            }
           })
         }
       })
