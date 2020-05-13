@@ -37,9 +37,8 @@ function saveLatestBlock(blockNumber){
     })
 }
 
-function saveNewRootPost(author, title, body, metadata, postTime){
+function saveNewComment(parentPermlink, author, title, body, metadata, postTime){
   connection.query(`SELECT * FROM users WHERE Username="${author}";`, (err, result) => {
-    console.log(err, result)
     if (err || !result.length){
       hive.api.getAccounts([author], (errHive, resultHive) => {
         if (errHive){
@@ -55,7 +54,7 @@ function saveNewRootPost(author, title, body, metadata, postTime){
               saveNewRootPost(author, title, body, metadata, postTime)
             }, 1000 * 0.5)
           } else {
-            connection.query(`INSERT INTO comments (AuthorID, Title, Body, Metadata, PostTime) VALUES(${id}, "${title}", "${body}", "${JSON.stringify(metadata)}", ${postTime});`, (errThree, resultThree) => {
+            connection.query(`INSERT INTO comments (ParentID, AuthorID, Title, Body, Metadata, PostTime) VALUES(${parentPermlink}, ${id}, "${title}", "${body}", "${JSON.stringify(metadata)}", ${postTime});`, (errThree, resultThree) => {
               //Error handling goes here
             })
           }
@@ -63,14 +62,27 @@ function saveNewRootPost(author, title, body, metadata, postTime){
       })
     } else {
       let id = result[0].ID
-      connection.query(`INSERT INTO comments (AuthorID, Title, Body, Metadata, PostTime) VALUES(${id}, "${title}", "${body}", "${JSON.stringify(metadata)}", ${postTime});`, (errTwo, resultTwo) => {
+      connection.query(`INSERT INTO comments (ParentID, AuthorID, Title, Body, Metadata, PostTime) VALUES(${parentPermlink}, ${id}, "${title}", "${body}", "${JSON.stringify(metadata)}", ${postTime});`, (errTwo, resultTwo) => {
         //Error handling goes here
       })
     }
   })
 }
 
+function saveNewRootPost(author, title, body, metadata, postTime){
+  saveNewComment(null, author, title, body, metadata, postTime)
+}
+
+function saveNewPostComment(parentPermlink, author, title, body, metadata, postTime){
+  connection.query(`SELECT * FROM comments WHERE ParentID="${parentPermlink}";`, (err, result) => {
+    if (!err || result.length){
+      saveNewComment(parentPermlink, author, title, body, metadata, postTime)
+    }
+  })
+}
+
 module.exports = {
     saveLatestBlock,
-    saveNewRootPost
+    saveNewRootPost,
+    saveNewPostComment
 }

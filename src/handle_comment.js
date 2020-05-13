@@ -20,7 +20,12 @@ function handleComment(user, time, json){
             return
         }
         if (config.features.comment && !isRoot){
-            //save as comment, ensure both parent-author and parent-permlink aren't blank though otherwise could cause problem.
+            try {
+                let metadata = JSON.parse(json.metadata)
+                db_updater.saveNewPostComment(json["parent-permlink"], json.author, json.title, json.body, metadata, time)
+            } catch (e){
+
+            }
             return
         }
     }
