@@ -74,8 +74,8 @@ function saveNewRootPost(author, title, body, metadata, postTime){
 }
 
 function saveNewPostComment(parentPermlink, author, title, body, metadata, postTime){
-  connection.query(`SELECT * FROM comments WHERE ParentID="${parentPermlink}";`, (err, result) => {
-    if (!err || result.length){
+  connection.query(`SELECT * FROM comments WHERE Permlink="${parentPermlink}";`, (err, result) => {
+    if (!err && result.length){
       saveNewComment(parentPermlink, author, title, body, metadata, postTime)
     }
   })
