@@ -26,7 +26,6 @@ function checkVoteJsonSchema(json){
         "vote" : String
     }
     for (i in schema){
-        console.log(typeof json[i])
         if (json[i] == undefined){
             return false
         }

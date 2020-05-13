@@ -1,6 +1,7 @@
 let mysql = require("mysql")
 let config = require("../config.json")
 let hive = require("@hivechain/hivejs")
+let db_data = require("./db_data.js")
 
 let db_config = {
     host : config.db_host,
@@ -99,7 +100,7 @@ function deleteComment(permlink, author){
       let id = result[0].ID
       connection.query(`SELECT * FROM comments WHERE Permlink=${permlink} AND AuthorID=${id};`, (errTwo, resultTwo) => {
         if(!errTwo && resultTwo.length){
-          var comment = resultTwo[0]
+          let comment = resultTwo[0]
           connection.query(`INSERT INTO deleted_comments (Permlink) VALUES(${comment.Permlink});`, (errThree, resultThree) => {
             //error hanlding goes here
           })
@@ -126,45 +127,37 @@ function updateComment(permlink, author, title, body, metadata, postTime){
   })
 }
 
-function saveVote(voter, permlink, voteValue){
-  connection.query(`SELECT * FROM comments WHERE Permlink=${permlink};`, (errZero, resultZero) => {
-    if (!errZero && resultZero.length){
-      connection.query(`SELECT * FROM users WHERE Username="${voter}";`, (err, result) => {
-        if (err || !result.length){
-          saveHiveUserID(author, (hiveID) => {
-            if (hiveID.success){
-              let id = hiveID.data.id
-              connection.query(`INSERT INTO users (ID, Username) VALUES(${id}, "${voter}");`, (errTwo, resultTwo) => {
-                if (errTwo){
-                  setTimeout(() => {
-                    saveVote(voter, permlink, voteValue)
-                  }, 1000 * 0.5)
-                } else {
-                  connection.query(`SELECT * FROM votes WHERE VoterID=${id} AND Permlink=${permlink};`, (errThree, resultThree) => {
-                    if (resultThree.length){
-                      connection.query(`UPDATE users WHERE VoterID=${id} AND Permlink=${permlink} SET VoteValue=${voteValue};`, (errFour, resultFour) => {
-                        //handle error
-                      })
-                    } else {
-                      connection.query(`INSERT INTO votes (Permlink, VoterID, VoteValue) VALUES(${permlink}, ${id}, ${voteValue});`, (errFour, resultFour) => {
-                        //handle error
-                      })
-                    }
-                  })
-                }
+function saveVote(voter, permlink, voteValue) {
+  db_data.getCommentWithPermlink(permlink, (comment) => {
+    if (comment.success && comment.data.length) {
+      db_data.getUserID(voter, userID => {
+        if (userID.success && userID.data.length) {
+          let id = userID.data[0].ID
+          db_data.getVoteByVoterIdPermlink(id, permlink, (existingVote) => {
+            if (existingVote.success && existingVote.data.length){
+              connection.query(`UPDATE users WHERE VoterID=${id} AND Permlink=${permlink} SET VoteValue=${voteValue};`, (err, result) => {
+                //handle error
+              })
+            } else {
+              connection.query(`INSERT INTO votes (Permlink, VoterID, VoteValue) VALUES(${permlink}, ${id}, ${voteValue});`, (err, result) => {
+                //handle error
               })
             }
           })
         } else {
-          let id = result[0].ID
-          connection.query(`SELECT * FROM votes WHERE VoterID=${id} AND Permlink=${permlink};`, (errTwo, resultTwo) => {
-            if (resultTwo.length){
-              connection.query(`UPDATE users WHERE VoterID=${id} AND Permlink=${permlink} SET VoteValue=${voteValue};`, (errThree, resultThree) => {
-                //handle error
-              })
-            } else {
-              connection.query(`INSERT INTO votes (Permlink, VoterID, VoteValue) VALUES(${permlink}, ${id}, ${voteValue});`, (errThree, errThree) => {
-                //handle error
+          saveHiveUserID(voter, (hiveID) => {
+            if (hiveID.success) {
+              let id = hiveID.data.id
+              db_data.getVoteByVoterIdPermlink(id, permlink, (existingVote) => {
+                if (existingVote.success && existingVote.data.length){
+                  connection.query(`UPDATE users WHERE VoterID=${id} AND Permlink=${permlink} SET VoteValue=${voteValue};`, (err, result) => {
+                    //handle error
+                  })
+                } else {
+                  connection.query(`INSERT INTO votes (Permlink, VoterID, VoteValue) VALUES(${permlink}, ${id}, ${voteValue});`, (err, result) => {
+                    //handle error
+                  })
+                }
               })
             }
           })

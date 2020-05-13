@@ -58,8 +58,19 @@ function getUserID(user, callback){
   })
 }
 
+function getVoteByVoterIdPermlink(voterId, permlink, callback){
+  connection.query(`SELECT * FROM votes WHERE VoterID=${voterId} AND Permlink=${permlink};`, (err, result) => {
+    if (err){
+      callback({success : false, error: err})
+      return
+      }
+      callback({success : true, data: result})
+  })
+}
+
 module.exports = {
     getLatestBlock,
     getCommentWithPermlink,
-    getUserID
+    getUserID,
+    getVoteByVoterIdPermlink
 }
