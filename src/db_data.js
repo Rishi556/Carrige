@@ -72,7 +72,7 @@ function getAuthorRootComments(author, callback){
   getUserID(author, (authorID) => {
     if (authorID.success && authorID.data.length){
       let id = authorID.data[0].ID
-      connection.query(`SELECT comments.Permlink, comments.ParentID, comments.AuthorID, users.Username AS Author, comments.Title, comments.Body, comments.Metadata, comments.PostTime, CONCAT("[",(SELECT GROUP_CONCAT(CONCAT('{"voter_id":',votes.VoterID,', "voteValue": ',votes.VoteValue,',"voter_name":"',(SELECT Users.username FROM users WHERE users.ID = votes.VoterID), '"}')) FROM votes WHERE comments.Permlink = votes.Permlink),"]") FROM comments LEFT JOIN deleted_comments ON comments.Permlink = deleted_comments.Permlink JOIN users ON users.id = comments.AuthorID WHERE comments.AuthorID = ${id} AND comments.ParentID IS NULL AND deleted_comments.Permlink IS NULL`, (err, result) => {
+      connection.query(`SELECT comments.Permlink, comments.ParentID, comments.AuthorID, users.Username AS Author, comments.Title, comments.Body, comments.Metadata, comments.PostTime, CONCAT("[",(SELECT GROUP_CONCAT(CONCAT('{"voter_id":',votes.VoterID,', "voteValue": ',votes.VoteValue,',"voter_name":"',(SELECT Users.username FROM users WHERE users.ID = votes.VoterID), '"}')) FROM votes WHERE comments.Permlink = votes.Permlink),"]") AS Votes FROM comments LEFT JOIN deleted_comments ON comments.Permlink = deleted_comments.Permlink JOIN users ON users.id = comments.AuthorID WHERE comments.AuthorID = ${id} AND comments.ParentID IS NULL AND deleted_comments.Permlink IS NULL`, (err, result) => {
         if (err){
           callback({success : false, error: err})
           return
