@@ -82,7 +82,7 @@ function saveNewComment(parentPermlink, author, title, body, metadata, postTime)
   })
 }
 
-function saveNewRootPost(author, title, body, metadata, postTime){
+function saveNewRootComment(author, title, body, metadata, postTime){
   saveNewComment(null, author, title, body, metadata, postTime)
 }
 
@@ -169,7 +169,7 @@ function saveVote(voter, permlink, voteValue) {
 
 module.exports = {
     saveLatestBlock,
-    saveNewRootPost,
+    saveNewRootComment,
     saveNewPostComment,
     deleteComment,
     updateComment,

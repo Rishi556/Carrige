@@ -13,7 +13,7 @@ function handleComment(user, time, json){
         if (config.features.root_post && isRoot){
             try {
                 let metadata = JSON.parse(json.metadata)
-                db_updater.saveNewRootPost(json.author, json.title, json.body, metadata, time)
+                db_updater.saveNewRootComment(json.author, json.title, json.body, metadata, time)
             } catch (e){
 
             }
