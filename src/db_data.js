@@ -68,9 +68,27 @@ function getVoteByVoterIdPermlink(voterId, permlink, callback){
   })
 }
 
+function getAuthorRootComments(author, callback){
+  getUserID(author, (authorID) => {
+    if (authorID.success && authorID.data.length){
+      let id = authorID.data[0].ID
+      connection.query(`SELECT comments.Permlink, comments.ParentID, comments.AuthorID, comments.Title, comments.Body, comments.Metadata, comments.PostTime, votes.VoterID, votes.VoteValue, users.Username AS Author, voterID.Username AS Voter FROM comments LEFT JOIN deleted_comments ON comments.Permlink = deleted_comments.Permlink LEFT JOIN votes ON comments.Permlink = votes.Permlink JOIN users ON users.id=comments.AuthorID LEFT JOIN users As voterID ON voterID.ID = votes.VoterID WHERE comments.AuthorID=${id} AND comments.ParentID IS NULL AND deleted_comments.Permlink IS NULL`, (err, result) => {
+        if (err){
+          callback({success : false, error: err})
+          return
+        }
+        callback({success : true, data: result})
+      })
+    } else {
+      callback({success : false, error: authorID.data.err || "Author not found."})
+    }
+  })
+}
+
 module.exports = {
     getLatestBlock,
     getCommentWithPermlink,
     getUserID,
-    getVoteByVoterIdPermlink
+    getVoteByVoterIdPermlink,
+    getAuthorRootComments
 }

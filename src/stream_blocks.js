@@ -5,6 +5,8 @@ let parse_block = require("./parse_block.js")
 
 let lastBockParsed = -1
 
+hive.api.setOptions({ url: 'https://anyx.io' })
+
 //Gets data from a particular block
 function getBlock(blockNumber){
     hive.api.getBlock(blockNumber, (errB, resultB) => {
