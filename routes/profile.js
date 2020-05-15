@@ -4,6 +4,12 @@ let hive_data = require("../src/hive_data.js")
 
 let router = express.Router()
 
+router.get('/created', (req, res) => {
+    db_data.getNewRootComments((cb) => {
+        res.json(cb)
+    })
+})
+
 router.get('/:username/feed', (req, res) => {
     let username = req.params.username
     hive_data.getFollowing(username, "", [], (cb) => { //TODO: will not last. Only for testing, on live ersion following will need to be generated client side(or we reinvent the wheel and make our own folliwng list)
