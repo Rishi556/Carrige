@@ -4,6 +4,13 @@ let hive_data = require("../src/hive_data.js")
 
 let router = express.Router()
 
+router.get('/post/:permlink', (req, res) => {
+    var permlink = req.params.permlink
+    db_data.getCommentWithPermlink(permlink, (cb) => {
+        res.json(cb)
+    })
+})
+
 router.get('/created', (req, res) => {
     db_data.getNewRootComments((cb) => {
         res.json(cb)
