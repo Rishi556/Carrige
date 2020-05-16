@@ -6,7 +6,7 @@ let router = express.Router()
 
 router.get('/post/:permlink', (req, res) => {
     var permlink = req.params.permlink
-    db_data.getCommentWithPermlink(permlink, (cb) => {
+    db_data.getCommentDetails(permlink, (cb) => {
         res.json(cb)
     })
 })
