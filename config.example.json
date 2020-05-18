@@ -19,7 +19,6 @@
             "initial_super_admin" : ""
         },
         "admin_action" : {
-            "delete_comment" : true,
             "ban_user" : true,
             "add_new_mod" : true
         },
