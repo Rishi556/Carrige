@@ -9,16 +9,20 @@ function parseBlock(block){
     let transactions = block.transactions
     for (i in transactions){
         let operations = transactions[i].operations
-        if (operations[0][0] == "custom_json"){
-            parseCustomJson(transactions[i], moment.utc(block.timestamp).unix())
+        for (i in operations){
+            if (operations[i][0] == "custom_json"){
+                parseCustomJson(transactions[i], moment.utc(block.timestamp).unix())
+            }
         }
     }
 }
 //Handles transactions that are custom_json
 function parseCustomJson(customJson, time){
-    let operation = customJson.operations[0][1]
-    if (operation.id == id){
-        handleTransaction(customJson, time)
+    for (i in customJson){
+        let operation = customJson.operations[i][1]
+        if (operation.id == id){
+            handleTransaction(customJson, time)
+        }
     }
 }
 
