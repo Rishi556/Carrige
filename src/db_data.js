@@ -38,16 +38,6 @@ function getLatestBlock(callback){
   })
 }
 
-function getCommentWithPermlink(permlink, callback){
-  connection.query(`SELECT * from comments WHERE Permlink=${permlink};`, (err, result) => {
-    if (err){
-        callback({success : false, error: err})
-        return
-    }
-    callback({success : true, data: result})
-  })
-}
-
 function getUserID(user, callback){
   connection.query(`SELECT * FROM users WHERE Username="${user}";`, (err, result) => {
     if (err){
@@ -115,7 +105,7 @@ function getNewRootComments(callback){
   })
 }
 
-function getCommentDetails(permlink, callback){ // THIS IS WRONG, SAME AS getCommentWithPermlink(EXCEPT THIS HAS MORE DETAILS SO WE KEEPING THIS ONE) UPDATE WHERE getCommentWithPermlink IS USED AFTER THE HACKATHON
+function getCommentDetails(permlink, callback){
   connection.query(`SELECT comments.Permlink, comments.ParentID, comments.AuthorID, users.Username AS Author, comments.Title, comments.Body, comments.Metadata, comments.PostTime, (SELECT JSON_ARRAYAGG(JSON_OBJECT("Permlink", com.Permlink, "AuthorID", com.AuthorID, "Author", (SELECT Username FROM users LEFT JOIN deleted_comments AS d ON com.Permlink = d.Permlink WHERE users.ID = com.AuthorID), "Title", com.Title, "Body", com.Body, "Metadata", com.Metadata, "PostTime", com.PostTime, "Votes", (SELECT JSON_ARRAYAGG(JSON_OBJECT("VoterID", votes.VoterID, "VoteValue", votes.VoteValue, "Voter", (SELECT users.Username FROM users WHERE users.ID = votes.VoterID) )) FROM votes WHERE com.Permlink = votes.Permlink), "Children", (SELECT JSON_ARRAYAGG(JSON_OBJECT("Permlink", subcomment.Permlink, "AuthorID", subcomment.AuthorID, "Author", (SELECT Username FROM users WHERE users.ID = subcomment.AuthorID), "Title", subcomment.Title, "Body", subcomment.Body, "Metadata", subcomment.Metadata, "PostTime", subcomment.PostTime)) FROM comments AS subcomment LEFT JOIN deleted_comments AS del ON subcomment.Permlink = del.Permlink WHERE subcomment.ParentID = com.Permlink AND del.Permlink IS NULL) )) FROM comments AS com WHERE com.ParentID = comments.Permlink) AS Children, (SELECT JSON_ARRAYAGG(JSON_OBJECT("VoterID", votes.VoterID, "VoteValue", votes.VoteValue, "Voter", (SELECT users.Username FROM users WHERE users.ID = votes.VoterID) )) FROM votes WHERE comments.Permlink = votes.Permlink) AS Votes FROM comments LEFT JOIN deleted_comments ON comments.Permlink = deleted_comments.Permlink JOIN users ON users.id = comments.AuthorID WHERE comments.Permlink = ${permlink} AND deleted_comments.Permlink IS NULL;`, (err, result) => {
     if (err){
       callback({success : false, error: err})
@@ -154,7 +144,6 @@ function getModByUsername(username, callback){
 
 module.exports = {
     getLatestBlock,
-    getCommentWithPermlink,
     getUserID,
     getVoteByVoterIdPermlink,
     getAuthorRootComments,

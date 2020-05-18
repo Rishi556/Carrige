@@ -128,7 +128,7 @@ function updateComment(permlink, author, title, body, metadata, postTime){
 }
 
 function saveVote(voter, permlink, voteValue) {
-  db_data.getCommentWithPermlink(permlink, (comment) => {
+  db_data.getCommentDetails(permlink, (comment) => {
     if (comment.success && comment.data.length) {
       db_data.getUserID(voter, userID => {
         if (userID.success && userID.data.length) {
