@@ -28,10 +28,10 @@ connection.connect((err) => {
     sql += `ALTER TABLE comments ADD FOREIGN KEY (AuthorID) REFERENCES users(ID);`
     sql += `ALTER TABLE votes ADD FOREIGN KEY (VoterID) REFERENCES users(ID);`
     sql += `ALTER TABLE admins ADD FOREIGN KEY (AdminID) REFERENCES users(ID);`
-    sql += `ALTER TABLE mods ADD FOREIGN KEY (ModID) REFERENCES users(ID)`;
+    sql += `ALTER TABLE mods ADD FOREIGN KEY (ModID) REFERENCES users(ID);`;
 
     if (config.features.super_admin.initial_super_admin != ""){
-        hive.api.getAccounts([user], (errHive, resultHive) => {
+        hive.api.getAccounts([config.features.super_admin.initial_super_admin], (errHive, resultHive) => {
             if (!errHive && resultHive){
                 let id = resultHive[0].id
                 sql += `INSERT INTO users (ID, Username) VALUES(${id}, "${config.features.super_admin.initial_super_admin}");`
