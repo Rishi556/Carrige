@@ -2,6 +2,7 @@ let moment = require("moment")
 let config = require("../config.json")
 let handle_comment = require("./handle_comment.js")
 let handle_vote = require("./handle_vote.js")
+let handle_admin_action = require("./handle_admin_action.js")
 let id = config.custom_json_id
 
 //Handles general block
@@ -27,7 +28,6 @@ function parseCustomJson(customJson, time){
 
 //Handles a transaction that matches id
 function handleTransaction(operation, time){
-    console.log(operation)
     let user = operation.required_posting_auths[0]
     let json = JSON.parse(operation.json)
     if (json.action == "comment"){
@@ -42,11 +42,14 @@ function handleTransaction(operation, time){
     if (json.action == "vote"){
         handle_vote.handleVote(user, json)
     }
+    if (json.action == "super_admin_action"){
+
+    }
     if (json.action == "admin_action"){
 
     }
-    if (json.actino == "mod_action"){
-
+    if (json.action == "mod_action"){
+        handle_admin_action.handleModAction(user, json)
     }
 }
 
