@@ -13,9 +13,18 @@
         "downvote" : true,
         "remove_vote" : true,
         "share" :true,
+        "super_admin" : {
+            "add_new_super_admin" : true,
+            "add_new_admin" : true,
+            "initial_super_admin" : ""
+        },
         "admin_action" : {
             "delete_comment" : true,
-            "ban_user" : true
+            "ban_user" : true,
+            "add_new_mod" : true
+        },
+        "mod_action" : {
+            "delete_comment" : true
         }
     }
 }
