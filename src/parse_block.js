@@ -9,26 +9,25 @@ function parseBlock(block){
     let transactions = block.transactions
     for (i in transactions){
         let operations = transactions[i].operations
-        for (i in operations){
-            if (operations[i][0] == "custom_json"){
-                parseCustomJson(transactions[i], moment.utc(block.timestamp).unix())
+        for (j in operations){
+            if (operations[j][0] == "custom_json"){
+                parseCustomJson(operations[j], moment.utc(block.timestamp).unix())
             }
         }
     }
 }
+
 //Handles transactions that are custom_json
 function parseCustomJson(customJson, time){
-    for (i in customJson){
-        let operation = customJson.operations[i][1]
-        if (operation.id == id){
-            handleTransaction(customJson, time)
-        }
+    let operation = customJson[1]
+    if (operation.id == id){
+        handleTransaction(operation, time)
     }
 }
 
 //Handles a transaction that matches id
-function handleTransaction(transaction, time){
-    let operation = transaction.operations[0][1]
+function handleTransaction(operation, time){
+    console.log(operation)
     let user = operation.required_posting_auths[0]
     let json = JSON.parse(operation.json)
     if (json.action == "comment"){
@@ -42,6 +41,12 @@ function handleTransaction(transaction, time){
     }
     if (json.action == "vote"){
         handle_vote.handleVote(user, json)
+    }
+    if (json.action == "admin_action"){
+
+    }
+    if (json.actino == "mod_action"){
+
     }
 }
 
