@@ -8,7 +8,9 @@ function handleModAction(user, json){
             if (checkModActionJsonSchema(json)){
                 try {
                     var modAction = JSON.parse(json.mod_action)
-                    deleteComment(modAction)
+                    if (modAction.action == "delete_comment" && config.features.mod_action.delete_comment){
+                        deleteComment(modAction)
+                    }
                 } catch (e) {
 
                 }
@@ -32,9 +34,7 @@ function checkModActionJsonSchema(json){
 
 function deleteComment(modAction){
     if(checkDeleteCommentJsonSchema(modAction)){
-        if (modAction.action == "delete_comment" && config.features.mod_action.delete_comment){
-            db_updater.deleteComment(modAction.permlink, modAction.author)
-        }
+        db_updater.deleteComment(modAction.permlink, modAction.author)
     }
 }
 
