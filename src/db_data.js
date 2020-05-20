@@ -143,7 +143,7 @@ function getModByUsername(username, callback){
 }
 
 function getAllAdmins(callback){
-  connection.query(`SELECT users.ID, users.Username FROM admins JOIN users ON admins.AdminID = users.ID WHERE admins.SuperAdmin = 0;`, (err, result) => {
+  connection.query(`SELECT users.ID, users.Username FROM admins JOIN users ON admins.AdminID = users.ID;`, (err, result) => {
     if (err){
       callback({success : false, error: err})
       return
@@ -156,7 +156,7 @@ function getAdminByUsername(username, callback){
   getUserID(username, (id) => {
     if (id.success && id.data.length){
       let ID = id.data[0].ID
-      connection.query(`SELECT users.ID, users.Username FROM admins JOIN users ON admins.AdminID = users.ID WHERE users.ID = ${ID} AND admins.SuperAdmin = 0;`, (err, result) => {
+      connection.query(`SELECT users.ID, users.Username FROM admins JOIN users ON admins.AdminID = users.ID WHERE users.ID = ${ID};`, (err, result) => {
         if (err){
           callback({success : false, error: err})
           return
