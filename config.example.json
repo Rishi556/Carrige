@@ -16,12 +16,14 @@
         "super_admin" : {
             "add_new_super_admin" : true,
             "add_new_admin" : true,
+            "remove_admin" : true,
             "initial_super_admin" : ""
         },
         "admin_action" : {
             "ban_user" : true,
             "unban_user" : true,
-            "add_new_mod" : true
+            "add_new_mod" : true,
+            "remove_mod" : true
         },
         "mod_action" : {
             "delete_comment" : true,
