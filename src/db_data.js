@@ -142,6 +142,60 @@ function getModByUsername(username, callback){
   }) 
 }
 
+function getAllAdmins(callback){
+  connection.query(`SELECT users.ID, users.Username FROM admins JOIN users ON admins.AdminID = users.ID WHERE admins.SuperAdmin = 0;`, (err, result) => {
+    if (err){
+      callback({success : false, error: err})
+      return
+    }
+    callback({success : true, data: result})
+  })  
+}
+
+function getAdminByUsername(username, callback){
+  getUserID(username, (id) => {
+    if (id.success && id.data.length){
+      let ID = id.data[0].ID
+      connection.query(`SELECT users.ID, users.Username FROM admins JOIN users ON admins.AdminID = users.ID WHERE users.ID = ${ID} AND admins.SuperAdmin = 0;`, (err, result) => {
+        if (err){
+          callback({success : false, error: err})
+          return
+        }
+        callback({success : true, data: result})
+      })  
+    } else {
+      callback({success : false, error: id.error})
+    }
+  }) 
+}
+
+function getAllSuperAdmins(callback){
+  connection.query(`SELECT users.ID, users.Username FROM admins JOIN users ON admins.AdminID = users.ID WHERE admins.SuperAdmin = 1;`, (err, result) => {
+    if (err){
+      callback({success : false, error: err})
+      return
+    }
+    callback({success : true, data: result})
+  })  
+}
+
+function getSuperAdminByUsername(username, callback){
+  getUserID(username, (id) => {
+    if (id.success && id.data.length){
+      let ID = id.data[0].ID
+      connection.query(`SELECT users.ID, users.Username FROM admins JOIN users ON admins.AdminID = users.ID WHERE users.ID = ${ID} AND admins.SuperAdmin = 1;`, (err, result) => {
+        if (err){
+          callback({success : false, error: err})
+          return
+        }
+        callback({success : true, data: result})
+      })  
+    } else {
+      callback({success : false, error: id.error})
+    }
+  }) 
+}
+
 module.exports = {
     getLatestBlock,
     getUserID,
@@ -152,5 +206,9 @@ module.exports = {
     getNewRootComments,
     getCommentDetails,
     getAllMods,
-    getModByUsername
+    getModByUsername,
+    getAllAdmins,
+    getAdminByUsername,
+    getAllSuperAdmins,
+    getSuperAdminByUsername
 }
