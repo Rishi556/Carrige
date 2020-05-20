@@ -12,7 +12,7 @@
         "upvote" : true,
         "downvote" : true,
         "remove_vote" : true,
-        "share" :true,
+        "share" : true,
         "super_admin" : {
             "add_new_super_admin" : true,
             "add_new_admin" : true,
@@ -20,10 +20,12 @@
         },
         "admin_action" : {
             "ban_user" : true,
+            "unban_user" : true,
             "add_new_mod" : true
         },
         "mod_action" : {
-            "delete_comment" : true
+            "delete_comment" : true,
+            "restore_comment" : true
         }
     }
 }
