@@ -33,7 +33,7 @@
   * From, the Carrige directory, run `node app.js`
   * This will start a server listening on port 80
 
-* Start up the PHP server
+* Start up the PHP server (Please not that this interface is currenlty temporary)
   * Create a 2nd terminal tab/window
   * cd to Carrige/interface directory
   * launch php server `php -S localhost:3000`
