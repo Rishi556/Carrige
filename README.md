@@ -5,7 +5,7 @@
 ### Pre-requisites
 
 * Install and configure mysql 
- * On MacOS, with homebrew you can install it with `brew install mysql`
+  * On MacOS, with homebrew you can install it with `brew install mysql`
  * Start mysql with `mysql.server start`
  * Configure user, password, and other settings with `mysql_secure_installation`
  * Test connection to mysql `mysql -uUser -p`
