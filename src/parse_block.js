@@ -43,10 +43,10 @@ function handleTransaction(operation, time){
         handle_vote.handleVote(user, json)
     }
     if (json.action == "super_admin_action"){
-
+        handle_admin_action.handleSuperAdminAction(user, json)
     }
     if (json.action == "admin_action"){
-
+        handle_admin_action.handleAdminAction(user, json)
     }
     if (json.action == "mod_action"){
         handle_admin_action.handleModAction(user, json)
