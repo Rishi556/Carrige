@@ -167,11 +167,22 @@ function saveVote(voter, permlink, voteValue) {
   })
 }
 
+function restoreComment(permlink){
+  db_data.getDeletedCommentWitPermlink(permlink, (comment) => {
+    if (comment.success && comment.data.length){
+      connection.query(`DELETE FROM deleted_comments WHERE Permlink=${permlink};`, (err, result) => {
+        //handle error
+      })
+    }
+  })
+}
+
 module.exports = {
     saveLatestBlock,
     saveNewRootComment,
     saveNewPostComment,
     deleteComment,
     updateComment,
-    saveVote
+    saveVote,
+    restoreComment
 }

@@ -196,6 +196,16 @@ function getSuperAdminByUsername(username, callback){
   }) 
 }
 
+function getDeletedCommentWitPermlink(permlink, callback){
+  connection.query(`SELECT * FROM deleted_comments WHERE Permlink=${permlink}`, (err, result) => {
+    if (err){
+      callback({success : false, error: err})
+      return
+    }
+    callback({success : true, data: result})
+  })
+}
+
 module.exports = {
     getLatestBlock,
     getUserID,
@@ -210,5 +220,6 @@ module.exports = {
     getAllAdmins,
     getAdminByUsername,
     getAllSuperAdmins,
-    getSuperAdminByUsername
+    getSuperAdminByUsername,
+    getDeletedCommentWitPermlink
 }

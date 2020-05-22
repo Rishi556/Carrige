@@ -12,7 +12,7 @@ function handleModAction(user, json){
                         deleteComment(modAction)
                     }
                     if (modAction.action == "restore_comment" && config.features.mod_action.restore_comment){
-
+                        restoreComment(modAction)
                     }
                 } catch (e) {
 
@@ -46,6 +46,26 @@ function checkDeleteCommentJsonSchema(json){
         "action" : String,
         "author" : String,
         "permlink" : String
+    }
+    for (i in schema){
+        if (json[i] == undefined){
+            return false
+        }
+    }
+    return true
+}
+
+function restoreComment(modAction){
+    console.log(modAction)
+    if(checkRestoreCommentJsonSchema(modAction)){
+        db_updater.restoreComment(modAction.permlink)
+    }
+}
+
+function checkRestoreCommentJsonSchema(json){
+    let schema = {
+        "action" : String,
+        "author" : String
     }
     for (i in schema){
         if (json[i] == undefined){
