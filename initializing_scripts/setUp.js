@@ -20,6 +20,7 @@ connection.connect((err) => {
     let sql = `CREATE TABLE general_stats (last_parsed_block INT);`
     sql += `INSERT INTO general_stats VALUES(-1);`
     sql += `CREATE TABLE users (ID INT PRIMARY KEY, Username VARCHAR(255) UNIQUE);`
+    sql += `CREATE TABLE banned_users (UserID INT PRIMARY KEY);`
     sql += `CREATE TABLE comments (Permlink INT AUTO_INCREMENT PRIMARY KEY,ParentID INT, AuthorID INT, Title TEXT, Body TEXT, Metadata JSON, PostTime INT);`
     sql += `CREATE TABLE votes (Permlink INT, VoterID INT, VoteValue INT);`
     sql += `CREATE TABLE deleted_comments (Permlink INT PRIMARY KEY);`
@@ -29,6 +30,7 @@ connection.connect((err) => {
     sql += `ALTER TABLE votes ADD FOREIGN KEY (VoterID) REFERENCES users(ID);`
     sql += `ALTER TABLE admins ADD FOREIGN KEY (AdminID) REFERENCES users(ID);`
     sql += `ALTER TABLE mods ADD FOREIGN KEY (ModID) REFERENCES users(ID);`;
+    sql += `ALTER TABLE banned_users ADD FOREIGN KEY (UserID) REFERENCES users(ID);`;
 
     if (config.features.super_admin.initial_super_admin != ""){
         hive.api.getAccounts([config.features.super_admin.initial_super_admin], (errHive, resultHive) => {
