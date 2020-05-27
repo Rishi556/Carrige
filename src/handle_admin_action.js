@@ -90,7 +90,7 @@ function handleAdminAction(user, json){
                         addNewMod(admin_action)
                     }
                     if (adminAction.action == "remove_mod" && config.features.admin_action.remove_mod){
-                        
+                        removeMod(admin_action)
                     }
                 } catch (e) {
 
@@ -120,6 +120,25 @@ function addNewMod(adminAction){
 }
 
 function checkAddNewModJsonSchema(json){
+    let schema = {
+        "action" : String,
+        "username" : String
+    }
+    for (i in schema){
+        if (json[i] == undefined){
+            return false
+        }
+    }
+    return true
+}
+
+function removeMod(adminAction){
+    if (checkRemoveModJsonSchema(adminAction)){
+        db_updater.removeMod(adminAction.username)
+    }
+}
+
+function checkRemoveModJsonSchema(json){
     let schema = {
         "action" : String,
         "username" : String

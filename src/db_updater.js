@@ -188,6 +188,17 @@ function addNewMod(username){
   })
 }
 
+function removeMod(username){
+  db_data.getUserID(username, (id) => {
+    if (id.success && id.data.length){
+      let ID = id.data[0].ID
+      connection.query(`DELETE FROM mods WHERE ModID=${ID};`, (err, result) => {
+        //handle error
+      })
+    }
+  })
+}
+
 module.exports = {
     saveLatestBlock,
     saveNewRootComment,
@@ -196,5 +207,6 @@ module.exports = {
     updateComment,
     saveVote,
     restoreComment,
-    addNewMod
+    addNewMod,
+    removeMod
 }
