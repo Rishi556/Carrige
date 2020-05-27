@@ -56,7 +56,6 @@ function checkDeleteCommentJsonSchema(json){
 }
 
 function restoreComment(modAction){
-    console.log(modAction)
     if(checkRestoreCommentJsonSchema(modAction)){
         db_updater.restoreComment(modAction.permlink)
     }
@@ -88,7 +87,7 @@ function handleAdminAction(user, json){
                         
                     }
                     if (adminAction.action == "add_new_mod" && config.features.admin_action.add_new_mod){
-                        
+                        addNewMod(admin_action)
                     }
                     if (adminAction.action == "remove_mod" && config.features.admin_action.remove_mod){
                         
@@ -105,6 +104,25 @@ function checkAdminActionJsonSchema(json){
     let schema = {
         "action" : String,
         "admin_action" : String
+    }
+    for (i in schema){
+        if (json[i] == undefined){
+            return false
+        }
+    }
+    return true
+}
+
+function addNewMod(adminAction){
+    if (checkAddNewModJsonSchema(adminAction)){
+        db_updater.addNewMod(adminAction.username)
+    }
+}
+
+function checkAddNewModJsonSchema(json){
+    let schema = {
+        "action" : String,
+        "username" : String
     }
     for (i in schema){
         if (json[i] == undefined){

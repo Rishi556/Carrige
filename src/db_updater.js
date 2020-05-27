@@ -177,6 +177,17 @@ function restoreComment(permlink){
   })
 }
 
+function addNewMod(username){
+  db_data.getUserID(username, (id) => {
+    if (id.success && id.data.length){
+      let ID = id.data[0].ID
+      connection.query(`REPLACE INTO mods (ModID) VALUES(${ID});`, (err, result) => {
+        //handle error
+      })
+    }
+  })
+}
+
 module.exports = {
     saveLatestBlock,
     saveNewRootComment,
@@ -184,5 +195,6 @@ module.exports = {
     deleteComment,
     updateComment,
     saveVote,
-    restoreComment
+    restoreComment,
+    addNewMod
 }
