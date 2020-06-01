@@ -158,13 +158,13 @@ function handleSuperAdminAction(user, json){
                 try {
                     var superAdminAction = JSON.parse(json.super_admin_action)
                     if (superAdminAction.action == "add_new_admin" && config.features.super_admin.add_new_admin){
-
+                        addNewAdmin(superAdminAction)
                     }
                     if (superAdminAction.action == "add_new_super_admin" && config.features.super_admin.add_new_super_admin){
-                        
+                        addNewSuperAdmin(superAdminAction)
                     }
                     if (superAdminAction.action == "remove_admin" && config.features.super_admin.add_new_admin){
-
+                        removeAdmin(superAdminAction)
                     }
                 } catch (e) {
 
@@ -178,6 +178,57 @@ function checkSuperAdminActionJsonSchema(json){
     let schema = {
         "action" : String,
         "super_admin_action" : String
+    }
+    for (i in schema){
+        if (json[i] == undefined){
+            return false
+        }
+    }
+    return true
+}
+
+function addNewAdmin(superAdminSchema){
+
+}
+
+function checkAddNewAdminJsonSchema(json){
+    let schema = {
+        "action" : String,
+        "username" : String
+    }
+    for (i in schema){
+        if (json[i] == undefined){
+            return false
+        }
+    }
+    return true
+}
+
+function addNewSuperAdmin(superAdminSchema){
+
+}
+
+function checkAddNewSuperAdminJsonSchema(json){
+    let schema = {
+        "action" : String,
+        "username" : String
+    }
+    for (i in schema){
+        if (json[i] == undefined){
+            return false
+        }
+    }
+    return true
+}
+
+function removeAdmin(superAdminSchema){
+
+}
+
+function checkRemoveAdminJsonSchema(json){
+    let schema = {
+        "action" : String,
+        "username" : String
     }
     for (i in schema){
         if (json[i] == undefined){
